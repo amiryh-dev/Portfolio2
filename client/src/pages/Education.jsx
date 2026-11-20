@@ -7,58 +7,27 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PageIntro, Tag, ContactCta } from "../components/Layout";
-const qualifications = [
-  {
-    title: "Software Engineering Technology — Artificial Intelligence",
-    institution: "Centennial College · Toronto, Ontario",
-    date: "September 2026 — Present",
-    status: "In progress",
-    icon: Cpu,
-    description:
-      "Fast-Track program, building on my software development experience with formal study in artificial intelligence, systems design, and applied mathematics.",
-    subjects: [
-      "Artificial Intelligence",
-      "AI Systems Design",
-      "Linear Algebra & Statistics",
-      "Java Programming",
-    ],
-  },
-  {
-    title: "English for Academic Purposes",
-    institution: "Centennial College · Toronto, Ontario",
-    date: "Completed August 2026",
-    status: "Completed",
-    icon: Languages,
-    description:
-      "Academic communication, writing, and presentation skills for studying and collaborating in English.",
-    subjects: [],
-  },
-  {
-    title: "Bachelor’s · Computer Software",
-    institution: "SAMA Technical and Vocational College · Quchan, Iran",
-    date: "Completed",
-    status: "Degree",
-    icon: BookOpen,
-    description: "Foundational studies in computer software and programming.",
-    subjects: [],
-  },
-];
+import { usePortfolio } from "../context/PortfolioContext";
+
+const qualificationIcons = { Cpu, Languages, BookOpen };
+
 export default function Education() {
+  const { navigation, qualifications, copy } = usePortfolio();
+  const content = copy.education;
   return (
     <>
       <PageIntro
-        number="04"
-        eyebrow="EDUCATION & LEARNING"
+        number={navigation.find((item) => item.path === "/education").number}
+        eyebrow={content.eyebrow}
         title={
           <>
-            Built on experience.
+            {content.title[0]}
             <br />
-            <span>Growing through learning.</span>
+            <span>{content.title[1]}</span>
           </>
         }
       >
-        A foundation in engineering and software, with a new chapter in
-        artificial intelligence.
+        {content.intro}
       </PageIntro>
       <div className="education-list">
         {qualifications.map((q, i) => (
@@ -68,7 +37,10 @@ export default function Education() {
           >
             <div className="education-top">
               <span className="education-icon">
-                <q.icon size={21} />
+                {(() => {
+                  const Icon = qualificationIcons[q.icon];
+                  return Icon ? <Icon size={21} /> : null;
+                })()}
               </span>
               <span className="qualification-status">{q.status}</span>
             </div>
@@ -88,11 +60,10 @@ export default function Education() {
       </div>
       <div className="learning-note">
         <p>
-          Learning has always been part of the work: a new framework, a better
-          architecture, or a clearer way to solve the problem.
+          {content.learningNote}
         </p>
         <Link to="/projects" className="text-link">
-          See it in practice
+          {content.learningLink}
           <ArrowUpRight size={16} />
         </Link>
       </div>

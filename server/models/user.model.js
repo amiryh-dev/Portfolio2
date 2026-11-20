@@ -25,7 +25,13 @@ const UserSchema = new mongoose.Schema({
           type: String,
           required: 'Password is required'
           },
-         salt: String
+         salt: String,
+          // Only admins can sign in to the dashboard and edit site content.
+          role: {
+            type: String,
+            enum: ['user', 'admin'],
+            default: 'user'
+          }
       });
         UserSchema.virtual('password')
     .set(function(password) {

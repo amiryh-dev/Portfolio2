@@ -1,36 +1,33 @@
 import mongoose from "mongoose";
 
-// Education / qualifications
-const QualificationSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    trim: true,
-    required: "Title is required",
+// Education / qualifications, shown on the Education page.
+const QualificationSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      trim: true,
+      required: "Title is required",
+    },
+    institution: {
+      type: String,
+      trim: true,
+      required: "Institution is required",
+    },
+    date: { type: String, trim: true },
+    status: { type: String, trim: true },
+    // Name of the icon shown on the Education page (Cpu, Languages or BookOpen).
+    icon: {
+      type: String,
+      enum: ["Cpu", "Languages", "BookOpen"],
+      default: "BookOpen",
+    },
+    description: { type: String, trim: true },
+    subjects: [{ type: String, trim: true }],
+    // Position in the list; lower numbers come first.
+    order: { type: Number, default: 0 },
   },
-  firstname: {
-    type: String,
-    trim: true,
-    required: "First name is required",
-  },
-  lastname: {
-    type: String,
-    trim: true,
-    required: "Last name is required",
-  },
-  email: {
-    type: String,
-    trim: true,
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
-    required: "Email is required",
-  },
-  completion: {
-    type: Date,
-  },
-  description: {
-    type: String,
-    trim: true,
-  },
-});
+  { timestamps: true },
+);
 
 export default mongoose.model(
   "Qualification",

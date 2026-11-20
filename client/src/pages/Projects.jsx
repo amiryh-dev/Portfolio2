@@ -1,24 +1,25 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowUpRight, ArrowLeft, ArrowRight } from "lucide-react";
-import { projects } from "../data/portfolio";
+import { usePortfolio } from "../context/PortfolioContext";
 import { PageIntro, Tag, ContactCta } from "../components/Layout";
 import NotFound from "./NotFound";
 export default function Projects() {
+  const { projects, navigation, copy } = usePortfolio();
+  const content = copy.projects;
   return (
     <>
       <PageIntro
-        number="03"
-        eyebrow="SELECTED PROJECTS"
+        number={navigation.find((item) => item.path === "/projects").number}
+        eyebrow={content.eyebrow}
         title={
           <>
-            The work.
+            {content.title[0]}
             <br />
-            <span>And the thinking behind it.</span>
+            <span>{content.title[1]}</span>
           </>
         }
       >
-        Creative tools, booking systems, and community platforms. Different
-        problems, the same care in the details.
+        {content.intro}
       </PageIntro>
       <div className="projects-list">
         {projects.map((project) => (
@@ -29,8 +30,8 @@ export default function Projects() {
               className="project-image-link"
             >
               <img
-                src={project.image}
-                alt={project.imageAlt}
+                src={project.image || "/images/project-placeholder.svg"}
+                alt={project.imageAlt || project.title}
                 width="720"
                 height="430"
                 loading="lazy"
@@ -73,6 +74,7 @@ export default function Projects() {
 }
 export function ProjectDetail() {
   const { slug } = useParams();
+  const { projects } = usePortfolio();
   const project = projects.find((p) => p.slug === slug);
   if (!project) return <NotFound />;
   const next = projects[(projects.indexOf(project) + 1) % projects.length];
@@ -91,8 +93,8 @@ export function ProjectDetail() {
       </PageIntro>
       <figure className="case-image">
         <img
-          src={project.image}
-          alt={project.imageAlt}
+          src={project.image || "/images/project-placeholder.svg"}
+          alt={project.imageAlt || project.title}
           width="720"
           height="430"
         />

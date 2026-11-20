@@ -1,8 +1,10 @@
 import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
+import { PortfolioProvider } from "./context/PortfolioContext";
+import { AuthProvider } from "./context/AuthContext";
 import "./styles.css";
 // Secondary pages are loaded on demand; the shared shell stays mounted while routing.
 const About = lazy(() => import("./pages/About"));
@@ -16,6 +18,9 @@ const Education = lazy(() => import("./pages/Education"));
 const Services = lazy(() => import("./pages/Services"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const SignIn = lazy(() => import("./pages/SignIn"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 function Page({ children }) {
   return (
     <Suspense
@@ -31,9 +36,37 @@ function Page({ children }) {
 }
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
+    <PortfolioProvider>
+      <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Sign-in, sign-up and the dashboard use their own full-width layout. */}
+          <Route
+            path="signin"
+            element={
+              <Page>
+                <SignIn />
+              </Page>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <Page>
+                <SignUp />
+              </Page>
+            }
+          />
+          <Route
+            path="dashboard"
+            element={
+              <Page>
+                <Dashboard />
+              </Page>
+            }
+          />
+          <Route path="admin" element={<Navigate to="/dashboard" replace />} />
+          <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route
             path="about"
@@ -91,8 +124,10 @@ createRoot(document.getElementById("root")).render(
               </Page>
             }
           />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+      </AuthProvider>
+    </PortfolioProvider>
   </React.StrictMode>,
 );

@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.routes.js'
 import contactRoutes from './routes/contact.routes.js'
 import projectRoutes from './routes/project.routes.js'
 import qualificationRoutes from './routes/qualification.routes.js'
+import portfolioRoutes from './routes/portfolio.routes.js'
 
 const app = express()
 
@@ -29,6 +30,7 @@ app.use('/', authRoutes)
 app.use('/', contactRoutes)
 app.use('/', projectRoutes)
 app.use('/', qualificationRoutes)
+app.use('/', portfolioRoutes)
 
 // Error handler (e.g. missing or invalid JWT token)
 app.use((err, req, res, next) => {

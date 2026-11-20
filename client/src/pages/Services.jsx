@@ -8,90 +8,36 @@ import {
   Check,
 } from "lucide-react";
 import { PageIntro, ContactCta } from "../components/Layout";
-const services = [
-  {
-    number: "01",
-    icon: Braces,
-    title: "Frontend development",
-    subtitle: "Interfaces that feel right.",
-    description:
-      "Responsive, accessible web interfaces built with React, Next.js, Vue, and Tailwind CSS.",
-    items: [
-      "Component-based interfaces",
-      "Responsive layouts",
-      "Design-to-code implementation",
-    ],
-    project: "editools",
-    projectName: "Editools",
-  },
-  {
-    number: "02",
-    icon: Layers3,
-    title: "Full-stack web applications",
-    subtitle: "A complete product, connected.",
-    description:
-      "Applications with clear APIs, reliable data flows, and practical automation behind the interface.",
-    items: [
-      "Node.js and Laravel backends",
-      "REST API integration",
-      "Authentication and data modeling",
-    ],
-    project: "travel-platform",
-    projectName: "Travel booking platform",
-  },
-  {
-    number: "03",
-    icon: Gauge,
-    title: "Performance & improvement",
-    subtitle: "Make the existing product better.",
-    description:
-      "Identify friction in loading, asset delivery, API usage, and repetitive operational workflows.",
-    items: [
-      "Lazy loading and caching",
-      "Asset delivery optimization",
-      "Queue-based workflow automation",
-    ],
-    project: "editools",
-    projectName: "Editools performance work",
-  },
-  {
-    number: "04",
-    icon: Smartphone,
-    title: "Cross-platform development",
-    subtitle: "Your product, on the move.",
-    description:
-      "Mobile experiences with React Native and Expo, connected to the services your product needs.",
-    items: [
-      "Cross-platform interfaces",
-      "Role-based user journeys",
-      "Maps and cloud media integration",
-    ],
-    project: "uphub",
-    projectName: "UpHub",
-  },
-];
+import { usePortfolio } from "../context/PortfolioContext";
+
+const serviceIcons = { Braces, Layers3, Gauge, Smartphone };
+
 export default function Services() {
+  const { navigation, services, copy } = usePortfolio();
+  const content = copy.services;
   return (
     <>
       <PageIntro
-        number="05"
-        eyebrow="HOW I CAN HELP"
+        number={navigation.find((item) => item.path === "/services").number}
+        eyebrow={content.eyebrow}
         title={
           <>
-            From a good idea.
+            {content.title[0]}
             <br />
-            <span>To a useful product.</span>
+            <span>{content.title[1]}</span>
           </>
         }
       >
-        I bring hands-on experience across the interface, the backend, and the
-        details that connect them.
+        {content.intro}
       </PageIntro>
       <div className="services-list">
         {services.map((s) => (
           <article key={s.number} className="service-card">
             <div className="service-top">
-              <s.icon size={28} strokeWidth={1.4} />
+              {(() => {
+                const Icon = serviceIcons[s.icon];
+                return Icon ? <Icon size={28} strokeWidth={1.4} /> : null;
+              })()}
               <span>/{s.number}</span>
             </div>
             <h2>{s.title}</h2>

@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   ArrowUpRight,
   Copy,
@@ -10,7 +9,8 @@ import {
   Linkedin,
 } from "lucide-react";
 import { PageIntro } from "../components/Layout";
-import { profile } from "../data/portfolio";
+import { apiRequest } from "../api";
+import { usePortfolio } from "../context/PortfolioContext";
 const emptyForm = {
   firstName: "",
   lastName: "",
@@ -19,16 +19,20 @@ const emptyForm = {
   message: "",
 };
 export default function Contact() {
+  const { navigation, profile, copy } = usePortfolio();
+  const content = copy.contact;
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [copyState, setCopyState] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const errorRef = useRef(null);
-  const navigate = useNavigate();
   function update(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
     if (error) setError("");
+    if (submitted) setSubmitted(false);
   }
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
     const values = Object.fromEntries(
       Object.entries(form).map(([key, value]) => [key, value.trim()]),
@@ -48,8 +52,27 @@ export default function Contact() {
       setTimeout(() => errorRef.current?.focus(), 0);
       return;
     }
-    
-    navigate("/", { state: { contactDraft: values } });
+    setSubmitting(true);
+    setError("");
+    try {
+      await apiRequest("/api/contacts", {
+        method: "POST",
+        body: JSON.stringify({
+          firstname: values.firstName,
+          lastname: values.lastName,
+          email: values.email,
+          phone: values.phone,
+          message: values.message,
+        }),
+      });
+      setSubmitted(true);
+      setForm(emptyForm);
+    } catch (submitError) {
+      setError(`${submitError.message} Please try again.`);
+      setTimeout(() => errorRef.current?.focus(), 0);
+    } finally {
+      setSubmitting(false);
+    }
   }
   async function copyEmail() {
     try {
@@ -62,18 +85,17 @@ export default function Contact() {
   return (
     <>
       <PageIntro
-        number="06"
-        eyebrow="GET IN TOUCH"
+        number={navigation.find((item) => item.path === "/contact").number}
+        eyebrow={content.eyebrow}
         title={
           <>
-            A conversation.
+            {content.title[0]}
             <br />
-            <span>A good place to start.</span>
+            <span>{content.title[1]}</span>
           </>
         }
       >
-        Have a project, an opportunity, or an interesting problem? I’d be happy
-        to hear about it.
+        {content.intro}
       </PageIntro>
       <section className="contact-panel" aria-label="Contact information">
         <div className="email-row">
@@ -118,11 +140,13 @@ export default function Contact() {
         </div>
       </section>
       <section className="form-section">
-        <h2>Start a conversation</h2>
-        <p className="form-note">
-          Prepare your message here, then send it through your email app. Fields
-          marked <span aria-hidden="true">*</span> are required.
-        </p>
+        <h2>{content.formTitle}</h2>
+        <p className="form-note">{content.formNote}</p>
+        {submitted && (
+          <p className="form-success" role="status">
+            {content.submitted}
+          </p>
+        )}
         <form onSubmit={submit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
             <div>
@@ -215,13 +239,12 @@ export default function Contact() {
               {error}
             </p>
           )}
-          <button type="submit" className="button-primary mt-7">
-            Prepare message
+          <button type="submit" className="button-primary mt-7" disabled={submitting}>
+            {submitting ? content.sending : content.submit}
             <ArrowUpRight size={18} />
           </button>
           <p className="privacy-note">
-            Your message stays in this browser until you choose to send the
-            email.
+            {content.privacyNote}
           </p>
         </form>
       </section>

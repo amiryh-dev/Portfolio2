@@ -4,11 +4,11 @@ import authCtrl from '../controllers/auth.controller.js'
 
 const router = express.Router()
 
-// Public: sign up and list users. Protected: remove all users.
+// Public: sign up and list users. Admin only: remove all users.
 router.route('/api/users')
   .get(userCtrl.list)
   .post(userCtrl.create)
-  .delete(authCtrl.requireSignin, userCtrl.removeAll)
+  .delete(authCtrl.requireSignin, authCtrl.requireAdmin, userCtrl.removeAll)
 
 // Protected: must be signed in; can only update/delete your own account
 router.route('/api/users/:userId')

@@ -10,6 +10,8 @@ export const profile = {
   youtube: "https://www.youtube.com/@SpikeTaka",
   linkedin: "https://www.linkedin.com/in/amyouh/",
   resume: "/documents/Amir-Younesi-Resume.pdf",
+  portrait: "/images/amir.png",
+  portraitAlt: "Amir Younesi",
 };
 export const navigation = [
   { path: "/", label: "Home", number: "01" },
@@ -182,3 +184,200 @@ export const skillGroups = [
     ],
   },
 ];
+
+export const qualifications = [
+  {
+    title: "Software Engineering Technology — Artificial Intelligence",
+    institution: "Centennial College · Toronto, Ontario",
+    date: "September 2026 — Present",
+    status: "In progress",
+    icon: "Cpu",
+    description:
+      "Fast-Track program, building on my software development experience with formal study in artificial intelligence, systems design, and applied mathematics.",
+    subjects: [
+      "Artificial Intelligence",
+      "AI Systems Design",
+      "Linear Algebra & Statistics",
+      "Java Programming",
+    ],
+  },
+  {
+    title: "English for Academic Purposes",
+    institution: "Centennial College · Toronto, Ontario",
+    date: "Completed August 2026",
+    status: "Completed",
+    icon: "Languages",
+    description:
+      "Academic communication, writing, and presentation skills for studying and collaborating in English.",
+    subjects: [],
+  },
+  {
+    title: "Bachelor’s · Computer Software",
+    institution: "SAMA Technical and Vocational College · Quchan, Iran",
+    date: "Completed",
+    status: "Degree",
+    icon: "BookOpen",
+    description: "Foundational studies in computer software and programming.",
+    subjects: [],
+  },
+];
+
+export const services = [
+  {
+    number: "01",
+    icon: "Braces",
+    title: "Frontend development",
+    subtitle: "Interfaces that feel right.",
+    description:
+      "Responsive, accessible web interfaces built with React, Next.js, Vue, and Tailwind CSS.",
+    items: [
+      "Component-based interfaces",
+      "Responsive layouts",
+      "Design-to-code implementation",
+    ],
+    project: "editools",
+    projectName: "Editools",
+  },
+  {
+    number: "02",
+    icon: "Layers3",
+    title: "Full-stack web applications",
+    subtitle: "A complete product, connected.",
+    description:
+      "Applications with clear APIs, reliable data flows, and practical automation behind the interface.",
+    items: [
+      "Node.js and Laravel backends",
+      "REST API integration",
+      "Authentication and data modeling",
+    ],
+    project: "travel-platform",
+    projectName: "Travel booking platform",
+  },
+  {
+    number: "03",
+    icon: "Gauge",
+    title: "Performance & improvement",
+    subtitle: "Make the existing product better.",
+    description:
+      "Identify friction in loading, asset delivery, API usage, and repetitive operational workflows.",
+    items: [
+      "Lazy loading and caching",
+      "Asset delivery optimization",
+      "Queue-based workflow automation",
+    ],
+    project: "editools",
+    projectName: "Editools performance work",
+  },
+  {
+    number: "04",
+    icon: "Smartphone",
+    title: "Cross-platform development",
+    subtitle: "Your product, on the move.",
+    description:
+      "Mobile experiences with React Native and Expo, connected to the services your product needs.",
+    items: [
+      "Cross-platform interfaces",
+      "Role-based user journeys",
+      "Maps and cloud media integration",
+    ],
+    project: "uphub",
+    projectName: "UpHub",
+  },
+];
+
+export const copy = {
+  layout: {
+    identityEyebrow: "ENGINEERING WITH INTENTION",
+    identityDescription: "I turn complex ideas into thoughtful digital experiences.",
+    railNote: "Care in the details. Purpose in the code.",
+    footerTagline: "Thoughtfully designed. Carefully built.",
+    contactEyebrow: "HAVE SOMETHING IN MIND?",
+    contactTitle: "Let’s build it thoughtfully.",
+  },
+  home: {
+    eyebrow: "HELLO, I’M AMIR",
+    title: ["Good software.", "Thoughtfully built."],
+    lead:
+      "I’m a full-stack developer who cares about how things work — and how they feel.",
+    description:
+      "Over nine years of building web applications, creative tools, and booking platforms. Now bringing that experience to new products in Canada, while exploring artificial intelligence.",
+    primaryLink: "Explore my work",
+    secondaryLink: "A little about me",
+    selectedWork: "Selected work",
+    allProjects: "All projects",
+    nextEyebrow: "THE NEXT CHAPTER",
+    nextTitle: "Experience meets curiosity.",
+    nextDescription:
+      "Building UpHub and studying Software Engineering Technology — Artificial Intelligence at Centennial College.",
+    nextLink: "My learning journey",
+  },
+  about: {
+    eyebrow: "ABOUT ME",
+    title: ["A developer.", "Always a learner."],
+    intro: "I’m Amir Younesi. You can call me Amir.",
+    paragraphs: [
+      "I’ve spent over nine years building software: creative tools, travel platforms, and the systems that make them work.",
+      "My work sits between thoughtful interfaces and practical engineering. I care about clear interactions, maintainable code, and performance that people can feel.",
+      "Today, I’m based in Richmond Hill, Ontario. I’m developing UpHub, a bilingual local-discovery platform, and studying Software Engineering Technology — Artificial Intelligence at Centennial College.",
+    ],
+    personalIntro: "Outside the editor, you’ll usually find me on a volleyball court. I play every week and share moments from our games on",
+    personalOutro: ". It’s another way to create, learn, and connect.",
+    personalLinkLabel: "YouTube",
+    experienceHeading: "The experience behind the work",
+    canadianExperience: {
+      eyebrow: "ALSO IN CANADA · FEB — AUG 2025",
+      title: "Security / Field Technician",
+      description:
+        "Synergy Protection Group Inc. — hands-on camera and NVR troubleshooting, field documentation, and coordination with site teams.",
+    },
+    skillsHeading: "My toolkit",
+  },
+  projects: {
+    eyebrow: "SELECTED PROJECTS",
+    title: ["The work.", "And the thinking behind it."],
+    intro:
+      "Creative tools, booking systems, and community platforms. Different problems, the same care in the details.",
+  },
+  education: {
+    eyebrow: "EDUCATION & LEARNING",
+    title: ["Built on experience.", "Growing through learning."],
+    intro:
+      "A foundation in engineering and software, with a new chapter in artificial intelligence.",
+    learningNote:
+      "Learning has always been part of the work: a new framework, a better architecture, or a clearer way to solve the problem.",
+    learningLink: "See it in practice",
+  },
+  services: {
+    eyebrow: "HOW I CAN HELP",
+    title: ["From a good idea.", "To a useful product."],
+    intro:
+      "I bring hands-on experience across the interface, the backend, and the details that connect them.",
+  },
+  contact: {
+    eyebrow: "GET IN TOUCH",
+    title: ["A conversation.", "A good place to start."],
+    intro:
+      "Have a project, an opportunity, or an interesting problem? I’d be happy to hear about it.",
+    formTitle: "Start a conversation",
+    formNote:
+      "Send your message directly. Fields marked * are required.",
+    submitted:
+      "Your message was saved. Thank you for getting in touch.",
+    sending: "Sending…",
+    submit: "Send message",
+    privacyNote: "Your message is stored so it can be followed up.",
+  },
+};
+
+const portfolioContent = {
+  profile,
+  navigation,
+  projects,
+  experience,
+  skillGroups,
+  qualifications,
+  services,
+  copy,
+};
+
+export default portfolioContent;

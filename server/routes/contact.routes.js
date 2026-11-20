@@ -5,16 +5,16 @@ import authCtrl from '../controllers/auth.controller.js'
 const router = express.Router()
 
 // Public: anyone can send a message (the contact form).
-// Protected: reading, updating and deleting messages.
+// Admin only: reading, updating and deleting messages.
 router.route('/api/contacts')
-  .get(authCtrl.requireSignin, contactCtrl.list)
+  .get(authCtrl.requireSignin, authCtrl.requireAdmin, contactCtrl.list)
   .post(contactCtrl.create)
-  .delete(authCtrl.requireSignin, contactCtrl.removeAll)
+  .delete(authCtrl.requireSignin, authCtrl.requireAdmin, contactCtrl.removeAll)
 
 router.route('/api/contacts/:contactId')
-  .get(authCtrl.requireSignin, contactCtrl.read)
-  .put(authCtrl.requireSignin, contactCtrl.update)
-  .delete(authCtrl.requireSignin, contactCtrl.remove)
+  .get(authCtrl.requireSignin, authCtrl.requireAdmin, contactCtrl.read)
+  .put(authCtrl.requireSignin, authCtrl.requireAdmin, contactCtrl.update)
+  .delete(authCtrl.requireSignin, authCtrl.requireAdmin, contactCtrl.remove)
 
 router.param('contactId', contactCtrl.contactByID)
 

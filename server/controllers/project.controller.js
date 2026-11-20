@@ -2,10 +2,22 @@ import Project from "../models/project.model.js";
 import extend from "lodash/extend.js";
 import errorHandler from "../helpers/dbErrorHandler.js";
 
+// Fields the client may not set directly.
+const editable = (body = {}) => {
+  const { _id, __v, createdAt, updatedAt, ...fields } = body;
+  return fields;
+};
+
 // POST api/projects -> add new project
 const create = async (req, res) => {
-  const project = new Project(req.body);
   try {
+    const fields = editable(req.body);
+    // New entries go to the end of the list unless a position is given.
+    if (fields.order === undefined || fields.order === "") {
+      const last = await Project.findOne().sort({ order: -1 }).select("order");
+      fields.order = last ? (last.order || 0) + 1 : 0;
+    }
+    const project = new Project(fields);
     await project.save();
     return res.status(200).json({
       message: "Project added successfully!",
@@ -21,7 +33,7 @@ const create = async (req, res) => {
 // GET api/projects -> get all projects
 const list = async (req, res) => {
   try {
-    let projects = await Project.find();
+    let projects = await Project.find().sort({ order: 1, _id: 1 });
     res.json(projects);
   } catch (err) {
     return res.status(400).json({
@@ -56,7 +68,7 @@ const read = (req, res) => {
 const update = async (req, res) => {
   try {
     let project = req.project;
-    project = extend(project, req.body);
+    project = extend(project, editable(req.body));
     await project.save();
     res.json(project);
   } catch (err) {

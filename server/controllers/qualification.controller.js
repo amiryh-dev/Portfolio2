@@ -2,10 +2,22 @@ import Qualification from "../models/qualification.model.js";
 import extend from "lodash/extend.js";
 import errorHandler from "../helpers/dbErrorHandler.js";
 
+// Fields the client may not set directly.
+const editable = (body = {}) => {
+  const { _id, __v, createdAt, updatedAt, ...fields } = body;
+  return fields;
+};
+
 // POST api/qualifications -> add new qualification
 const create = async (req, res) => {
-  const qualification = new Qualification(req.body);
   try {
+    const fields = editable(req.body);
+    // New entries go to the end of the list unless a position is given.
+    if (fields.order === undefined || fields.order === "") {
+      const last = await Qualification.findOne().sort({ order: -1 }).select("order");
+      fields.order = last ? (last.order || 0) + 1 : 0;
+    }
+    const qualification = new Qualification(fields);
     await qualification.save();
     return res.status(200).json({
       message: "Qualification added successfully!",
@@ -21,7 +33,7 @@ const create = async (req, res) => {
 // GET api/qualifications -> get all qualifications
 const list = async (req, res) => {
   try {
-    let qualifications = await Qualification.find();
+    let qualifications = await Qualification.find().sort({ order: 1, _id: 1 });
     res.json(qualifications);
   } catch (err) {
     return res.status(400).json({
@@ -56,7 +68,7 @@ const read = (req, res) => {
 const update = async (req, res) => {
   try {
     let qualification = req.qualification;
-    qualification = extend(qualification, req.body);
+    qualification = extend(qualification, editable(req.body));
     await qualification.save();
     res.json(qualification);
   } catch (err) {

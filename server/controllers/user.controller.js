@@ -4,7 +4,10 @@ import errorHandler from "../helpers/dbErrorHandler.js";
 
 // POST api/users -> add new user (sign up)
 const create = async (req, res) => {
-  const user = new User(req.body);
+  // The role can't be chosen at sign-up; admins are created with
+  // `npm run create-admin`.
+  const { role, ...fields } = req.body || {};
+  const user = new User(fields);
   try {
     await user.save();
     return res.status(200).json({
@@ -20,7 +23,7 @@ const create = async (req, res) => {
 // GET api/users -> get all users
 const list = async (req, res) => {
   try {
-    let users = await User.find().select("name email updated created");
+    let users = await User.find().select("name email role updated created");
     res.json(users);
   } catch (err) {
     return res.status(400).json({
@@ -57,7 +60,8 @@ const read = (req, res) => {
 const update = async (req, res) => {
   try {
     let user = req.profile;
-    user = extend(user, req.body);
+    const { role, ...fields } = req.body || {};
+    user = extend(user, fields);
     user.updated = Date.now();
     await user.save();
     user.hashed_password = undefined;

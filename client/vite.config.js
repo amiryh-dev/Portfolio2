@@ -9,5 +9,16 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ["terminal.local"],
     hmr: { clientPort: 4173 },
+    proxy: {
+      "/api": {
+        target: process.env.API_PROXY_TARGET || "http://localhost:3000",
+        changeOrigin: true,
+      },
+      "/auth": {
+        target: process.env.API_PROXY_TARGET || "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
   },
+  cacheDir: ".vite-cache",
 });

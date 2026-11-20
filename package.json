@@ -26,10 +26,11 @@
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
-    "dev": "concurrently 'vite' \"nodemon server.js\"",
-    "build": "vite build",
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm run server\"",
+    "build": "npm --prefix client run build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "npm --prefix client run preview",
+    "create-admin": "node scripts/create-admin.js"
   },
   "name": "myportfolio",
   "version": "1.0.0",

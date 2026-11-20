@@ -3,24 +3,56 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import {
   ArrowUpRight,
   Download,
+  LayoutDashboard,
   Linkedin,
+  LogIn,
   Mail,
   MapPin,
   Menu,
   X,
 } from "lucide-react";
-import { navigation, profile } from "../data/portfolio";
+import { usePortfolio } from "../context/PortfolioContext";
+import { useAuth } from "../context/AuthContext";
+
+function AccountLinks() {
+  const { user, signOut } = useAuth();
+  if (user) {
+    return (
+      <div className="account-links">
+        <Link to="/dashboard">
+          <LayoutDashboard size={15} /> Dashboard
+        </Link>
+        <button type="button" onClick={signOut}>
+          Sign out
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="account-links">
+      <Link to="/signin">
+        <LogIn size={15} /> Sign in
+      </Link>
+      <Link to="/signup">Sign up</Link>
+    </div>
+  );
+}
 
 export function Logo({ compact = false }) {
+  const { profile } = usePortfolio();
   return (
-    <Link to="/" className="brand" aria-label="Amir Younesi — Home">
+    <Link to="/" className="brand" aria-label={`${profile.name} — Home`}>
       <span className="brand-mark" aria-hidden="true">
-        a<span>y</span>
+        {profile.name
+          .split(" ")
+          .map((part) => part[0])
+          .join("")
+          .toLowerCase()}
         <i />
       </span>
       {!compact && (
         <span className="brand-label">
-          AMIR YOUNESI
+          {profile.name.toUpperCase()}
         </span>
       )}
     </Link>
@@ -56,11 +88,12 @@ export function SectionHeading({ label, link, to }) {
   );
 }
 export function ContactCta() {
+  const { copy } = usePortfolio();
   return (
     <div className="contact-cta">
       <div>
-        <span className="eyebrow">HAVE SOMETHING IN MIND?</span>
-        <h2>Let’s build it thoughtfully.</h2>
+        <span className="eyebrow">{copy.layout.contactEyebrow}</span>
+        <h2>{copy.layout.contactTitle}</h2>
       </div>
       <Link to="/contact" className="circle-link" aria-label="Contact Amir">
         <ArrowUpRight size={24} />
@@ -70,6 +103,7 @@ export function ContactCta() {
 }
 
 export default function Layout() {
+  const { navigation, profile, copy } = usePortfolio();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef(null);
@@ -82,11 +116,11 @@ export default function Layout() {
       (location.pathname.startsWith("/projects/")
         ? "Project details"
         : "Page not found");
-    document.title = `${title} · Amir Younesi — Full-Stack Developer`;
+    document.title = `${title} · ${profile.name} — ${profile.role}`;
     if (!initialRoute.current)
       document.getElementById("main-content")?.focus({ preventScroll: true });
     initialRoute.current = false;
-  }, [location.pathname]);
+  }, [location.pathname, profile.name, profile.role]);
   useEffect(() => {
     function closeOnEscape(event) {
       if (event.key === "Escape" && menuOpen) {
@@ -104,7 +138,7 @@ export default function Layout() {
       </a>
       <header className="mobile-header">
         <Logo compact />
-        <span className="text-sm font-medium">Amir Younesi</span>
+        <span className="text-sm font-medium">{profile.name}</span>
         <button
           ref={menuButton}
           className="icon-button"
@@ -121,16 +155,15 @@ export default function Layout() {
           <Logo />
         </div>
         <div className="identity">
-          <span className="eyebrow">ENGINEERING WITH INTENTION</span>
+          <span className="eyebrow">{copy.layout.identityEyebrow}</span>
           <Link to="/" className="identity-name">
-            Amir
+            {profile.name.split(" ")[0]}
             <br />
-            Younesi<span>.</span>
+            {profile.name.split(" ").slice(1).join(" ")}<span>.</span>
           </Link>
           <p className="identity-role">{profile.role}</p>
           <p className="identity-description">
-            I turn complex ideas into
-            <br className="hidden xl:block" /> thoughtful digital experiences.
+            {copy.layout.identityDescription}
           </p>
         </div>
         <nav id="main-navigation" aria-label="Main navigation">
@@ -155,24 +188,25 @@ export default function Layout() {
               href={profile.linkedin}
               target="_blank"
               rel="noreferrer"
-              aria-label="Amir on LinkedIn"
+              aria-label={`${profile.name} on LinkedIn`}
             >
               <Linkedin size={20} />
             </a>
-            <a href={`mailto:${profile.email}`} aria-label="Email Amir">
+            <a href={`mailto:${profile.email}`} aria-label={`Email ${profile.name}`}>
               <Mail size={21} />
             </a>
             <a
               href={profile.resume}
               download
-              aria-label="Download Amir's resume PDF"
+              aria-label={`Download ${profile.name}'s resume PDF`}
             >
               <Download size={21} />
             </a>
             <span className="social-rule" />
           </div>
         
-          <p className="rail-note">Care in the details. Purpose in the code.</p>
+          <p className="rail-note">{copy.layout.railNote}</p>
+          <AccountLinks />
         </div>
       </aside>
       <div className="content-column">
@@ -185,8 +219,8 @@ export default function Layout() {
           <Outlet />
         </main>
         <footer className="site-footer">
-          <span>© {new Date().getFullYear()} Amir Younesi</span>
-          <span>Thoughtfully designed. Carefully built.</span>
+          <span>© {new Date().getFullYear()} {profile.name}</span>
+          <span>{copy.layout.footerTagline}</span>
         </footer>
       </div>
     </div>

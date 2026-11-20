@@ -12,14 +12,15 @@ const signin = async (req, res) => {
     if (!user.authenticate(req.body.password)) {
       return res.status(401).send({ error: "Email and password don't match." })
     }
-    const token = jwt.sign({ _id: user._id }, config.jwtSecret)
-    res.cookie('t', token, { expire: new Date() + 9999 })
+    const token = jwt.sign({ _id: user._id }, config.jwtSecret, { expiresIn: '8h' })
+    res.cookie('t', token, { maxAge: 8 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' })
     return res.json({
       token,
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: user.role || 'user'
       }
     })
   } catch (err) {
@@ -56,4 +57,29 @@ const hasAuthorization = (req, res, next) => {
   next()
 }
 
-export default { signin, signout, requireSignin, hasAuthorization }
+// Only admins may continue. The role is read from the database on every
+// request, so removing a user's admin role takes effect immediately.
+const requireAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.auth && req.auth._id).select('role')
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: "Admin access is required." })
+    }
+    next()
+  } catch (err) {
+    return res.status(403).json({ error: "Admin access is required." })
+  }
+}
+
+// GET /auth/me -> the signed-in user's account (used to restore a session)
+const me = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id).select('name email role')
+    if (!user) return res.status(401).json({ error: "User not found" })
+    return res.json({ _id: user._id, name: user.name, email: user.email, role: user.role || 'user' })
+  } catch (err) {
+    return res.status(401).json({ error: "Could not load the account" })
+  }
+}
+
+export default { signin, signout, requireSignin, hasAuthorization, requireAdmin, me }
