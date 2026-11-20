@@ -28,6 +28,9 @@ export default function Contact() {
   const [submitting, setSubmitting] = useState(false);
   const errorRef = useRef(null);
   function update(event) {
+    // Browser extensions (e.g. Grammarly) can fire input events without
+    // changing the text; those shouldn't hide the success message.
+    if (form[event.target.name] === event.target.value) return;
     setForm({ ...form, [event.target.name]: event.target.value });
     if (error) setError("");
     if (submitted) setSubmitted(false);

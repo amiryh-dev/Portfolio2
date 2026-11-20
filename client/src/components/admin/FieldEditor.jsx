@@ -156,8 +156,7 @@ function ListEditor({ label, value, onChange, shape, path, choicesFor }) {
   const objects = isObject(sample);
   const update = (index, next) => onChange(value.map((item, i) => (i === index ? next : item)));
   const remove = (index) => {
-    const name = itemTitle(value[index], index);
-    if (objects && !window.confirm(`Remove “${name}”?`)) return;
+    // Removing only changes the unsaved draft; "Discard" brings it back.
     onChange(value.filter((_, i) => i !== index));
   };
   const moveItem = (from, to) => onChange(move(value, from, to));

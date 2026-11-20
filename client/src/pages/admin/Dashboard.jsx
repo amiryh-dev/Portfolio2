@@ -24,6 +24,7 @@ import CollectionManager, {
   QUALIFICATION_FIELDS,
 } from "../../components/admin/CollectionManager";
 import Messages from "../../components/admin/Messages";
+import { useConfirm } from "../../components/admin/ConfirmDialog";
 
 // `collection` sections use their own REST API (one request per change);
 // the others are part of the page content document saved with "Save changes".
@@ -70,6 +71,7 @@ export default function Dashboard() {
   const [active, setActive] = useState("profile");
   const [status, setStatus] = useState({ type: "", text: "" });
   const [saving, setSaving] = useState(false);
+  const [confirm, confirmDialog] = useConfirm();
 
   const dirty = useMemo(
     () => isAdmin && JSON.stringify(draft) !== JSON.stringify(savedContent),
@@ -124,15 +126,26 @@ export default function Dashboard() {
     }
   }
 
-  function discard() {
-    if (window.confirm("Discard all unsaved changes?")) {
+  async function discard() {
+    const ok = await confirm("Your unsaved changes will be lost.", {
+      title: "Discard changes?",
+      confirmLabel: "Discard",
+      danger: true,
+    });
+    if (ok) {
       setDraft(savedContent);
       setStatus({ type: "", text: "" });
     }
   }
 
-  function confirmSignOut() {
-    if (dirty && !window.confirm("You have unsaved changes. Sign out anyway?")) return;
+  async function confirmSignOut() {
+    if (dirty) {
+      const ok = await confirm("You have unsaved changes. They will be lost if you sign out.", {
+        title: "Sign out?",
+        confirmLabel: "Sign out",
+      });
+      if (!ok) return;
+    }
     signOut();
   }
 
@@ -190,6 +203,7 @@ export default function Dashboard() {
 
   return (
     <div className="admin-shell">
+      {confirmDialog}
       <header className="admin-header">
         <div className="admin-brand">
           <LayoutList size={18} />

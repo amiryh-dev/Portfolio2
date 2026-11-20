@@ -37,12 +37,31 @@ async function seedContent() {
 
   if (!existing) {
     await PortfolioContent.create({ key: 'main', content: pageContent })
-  } else if (existing.content?.projects || existing.content?.qualifications) {
-    await PortfolioContent.updateOne(
-      { key: 'main' },
-      { $unset: { 'content.projects': '', 'content.qualifications': '' } },
-    )
+    return
   }
+
+  // Add fields that newer versions of the site expect but an older saved
+  // document doesn't have yet. Saved values are never replaced.
+  const { projects: _p, qualifications: _q, ...savedContent } = existing.content || {}
+  const filled = fillMissing(savedContent, pageContent)
+  if (filled.changed || existing.content?.projects || existing.content?.qualifications) {
+    await PortfolioContent.updateOne({ key: 'main' }, { $set: { content: filled.value } })
+  }
+}
+
+// Returns `saved` with every key from `defaults` that `saved` is missing.
+function fillMissing(saved, defaults) {
+  const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)
+  if (saved === undefined) return { value: defaults, changed: true }
+  if (!isObject(saved) || !isObject(defaults)) return { value: saved, changed: false }
+  let changed = false
+  const value = { ...saved }
+  for (const key of Object.keys(defaults)) {
+    const result = fillMissing(saved[key], defaults[key])
+    value[key] = result.value
+    changed = changed || result.changed
+  }
+  return { value, changed }
 }
 
 async function startServer() {

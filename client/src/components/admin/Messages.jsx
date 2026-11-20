@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { apiRequest } from "../../api";
+import { useConfirm } from "./ConfirmDialog";
 
 const FIELDS = [
   { name: "firstname", label: "First name" },
@@ -74,6 +75,7 @@ export default function Messages({ token, onUnauthorized }) {
   const [messages, setMessages] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
+  const [confirm, confirmDialog] = useConfirm();
 
   const handleError = useCallback(
     (requestError) => {
@@ -105,9 +107,11 @@ export default function Messages({ token, onUnauthorized }) {
   }
 
   async function remove(message) {
-    if (!window.confirm(`Delete the message from ${message.firstname} ${message.lastname}? This can't be undone.`)) {
-      return;
-    }
+    const ok = await confirm(
+      `The message from ${message.firstname} ${message.lastname} will be permanently deleted. This can't be undone.`,
+      { title: "Delete this message?", confirmLabel: "Delete", danger: true },
+    );
+    if (!ok) return;
     setError("");
     try {
       await apiRequest(`/api/contacts/${message._id}`, { method: "DELETE", token });
@@ -119,6 +123,7 @@ export default function Messages({ token, onUnauthorized }) {
 
   return (
     <>
+      {confirmDialog}
       {error && (
         <p className="form-error" role="alert">
           {error}

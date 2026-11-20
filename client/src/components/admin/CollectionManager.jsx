@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { ArrowLeft, Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { apiRequest } from "../../api";
+import { useConfirm } from "./ConfirmDialog";
 
 // Create / read / update / delete for one collection (projects or
 // qualifications) through its REST API. Admins can change entries; other
@@ -133,6 +134,7 @@ export default function CollectionManager({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [confirm, confirmDialog] = useConfirm();
 
   const reload = useCallback(async () => {
     const list = await apiRequest(endpoint);
@@ -170,7 +172,12 @@ export default function CollectionManager({
   }
 
   async function remove(item) {
-    if (!window.confirm(`Delete “${item.title}”? This can't be undone.`)) return;
+    const ok = await confirm(`“${item.title}” will be permanently deleted. This can't be undone.`, {
+      title: `Delete this ${noun}?`,
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
     setError("");
     try {
       await apiRequest(`${endpoint}/${item._id}`, { method: "DELETE", token });
@@ -224,6 +231,7 @@ export default function CollectionManager({
         </p>
       )}
       {items.length === 0 && <p className="admin-empty">Nothing here yet.</p>}
+      {confirmDialog}
       <ul className="admin-rows">
         {items.map((item) => (
           <li key={item._id} className="admin-row">
